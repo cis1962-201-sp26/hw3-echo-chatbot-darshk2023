@@ -1,65 +1,53 @@
-type Message = { role: string; content: string };
-
-let currentChat: { messages: Message[] } = { messages: [] };
-
-const chatArea = document.getElementById('chat-area') as HTMLDivElement;
-const chatInput = document.getElementById('chat-input') as HTMLInputElement;
-const sendBtn = document.getElementById('send-btn') as HTMLButtonElement;
-const newChatBtn = document.getElementById('new-chat-btn') as HTMLButtonElement;
-
+var currentChat = { messages: [] };
+var chatArea = document.getElementById('chat-area');
+var chatInput = document.getElementById('chat-input');
+var sendBtn = document.getElementById('send-btn');
+var newChatBtn = document.getElementById('new-chat-btn');
 /**
  * Simulates a bot response to a user message
  * @param {string} userMessage - The user's message
  * @returns {string} - The bot's response
  */
-function simulateBotResponse(userMessage: Message['content']) {
+function simulateBotResponse(userMessage) {
     // Simulate bot response with a delay
-    setTimeout(() => {
-        const botReply: string = `You said: "${userMessage}"`;
+    setTimeout(function () {
+        var botReply = "You said: \"".concat(userMessage, "\"");
         sendMessage('Echo', botReply);
     }, 500);
 }
-
 /**
  * Sends a message in the current chat
  * @param {string} role - The role of the message sender ('User' or 'Echo')
  * @param {string} message - The message content
  */
-function sendMessage(role: string, message: string) {
+function sendMessage(role, message) {
     if (message.trim() === '') {
         return;
     }
-
-    const newMessage: Message = { role, content: message };
+    var newMessage = { role: role, content: message };
     currentChat.messages.push(newMessage);
     localStorage.setItem('chat', JSON.stringify(currentChat));
-
     renderMessages(currentChat.messages);
     if (role === 'User') {
         simulateBotResponse(message);
     }
 }
-
 /**
  * Renders the messages in the chat current selected
  * @param {{role: string, content: string}[]} messages - The messages to render
  */
-function renderMessages(messages: Message[]) {
+function renderMessages(messages) {
     chatArea.innerHTML = '';
-
-    for (const msg of messages) {
-        const bubble = document.createElement('div');
-
+    for (var _i = 0, messages_1 = messages; _i < messages_1.length; _i++) {
+        var msg = messages_1[_i];
+        var bubble = document.createElement('div');
         bubble.classList.add('message');
         bubble.classList.add(msg.role === 'User' ? 'user' : 'echo');
-
         bubble.textContent = msg.content;
         chatArea.appendChild(bubble);
     }
-
     chatArea.scrollTop = chatArea.scrollHeight;
 }
-
 /**
  * Creates a new chat
  * @requirements
@@ -72,7 +60,6 @@ function createNewChat() {
     localStorage.setItem('chat', JSON.stringify(currentChat));
     renderMessages(currentChat.messages);
 }
-
 /**
  * Initializes the app
  * @requirements
@@ -81,33 +68,30 @@ function createNewChat() {
  * - If no chat exists, create a new chat
  */
 function initializeApp() {
-    const saved = localStorage.getItem('chat');
-
+    var saved = localStorage.getItem('chat');
     if (saved) {
-        currentChat = JSON.parse(saved) as { messages: Message[] };
+        currentChat = JSON.parse(saved);
         renderMessages(currentChat.messages);
-    } else {
+    }
+    else {
         createNewChat();
     }
 }
-
 // EVENT LISTENERS
-newChatBtn.addEventListener('click', () => {
+newChatBtn.addEventListener('click', function () {
     createNewChat();
 });
-
-sendBtn.addEventListener('click', () => {
-    const text = chatInput.value.trim();
+sendBtn.addEventListener('click', function () {
+    var text = chatInput.value.trim();
     if (text !== '') {
         sendMessage('User', text);
         chatInput.value = '';
         sendBtn.disabled = true;
     }
 });
-
-chatInput.addEventListener('keydown', (event: KeyboardEvent) => {
+chatInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter') {
-        const text = chatInput.value.trim();
+        var text = chatInput.value.trim();
         if (text !== '') {
             sendMessage('User', text);
             chatInput.value = '';
@@ -115,10 +99,9 @@ chatInput.addEventListener('keydown', (event: KeyboardEvent) => {
         }
     }
 });
-
-chatInput.addEventListener('input', () => {
+chatInput.addEventListener('input', function () {
     sendBtn.disabled = chatInput.value.trim() === '';
 });
-
 // Initialize the app upon reload
 initializeApp();
+export {};
